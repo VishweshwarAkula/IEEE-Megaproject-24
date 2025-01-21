@@ -6,12 +6,13 @@ import GradientText from "./GradientText/GradientText";
 import SpotlightCard from "./SpotlightCard/SpotlightCard";
 import Squares from "./Backgrounds/Squares";
 import Dock from './Dock/Dock';
-import CountUp from './CountUp/CountUp'
+import CountUp from './CountUp/CountUp';
 
 function App() {
   const [data, setData] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({ title: "", details: "" });
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
   // Fetch attendance data using SSE
   useEffect(() => {
@@ -50,32 +51,16 @@ function App() {
     setIsModalOpen(false);
   };
 
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  };
+
   const spotlightData = [
-    {
-      title: "CSE",
-      attended: data.attendedClassesCS,
-      total: data.totalClassesCS,
-    },
-    {
-      title: "BEE", 
-      attended: data.attendedClassesBEE,
-      total: data.totalClassesBEE,
-    },
-    {
-      title: "Physics",
-      attended: data.attendedClassesPhysics,
-      total: data.totalClassesPhysics,
-    },
-    {
-      title: "Math",
-      attended: data.attendedClassesMath,
-      total: data.totalClassesMath,
-    },
-    {
-      title: "PPS",
-      attended: data.attendedClassesPPS,
-      total: data.totalClassesPPS,
-    },
+    { title: "CSE", attended: data.attendedClassesCS, total: data.totalClassesCS },
+    { title: "BEE", attended: data.attendedClassesBEE, total: data.totalClassesBEE },
+    { title: "Physics", attended: data.attendedClassesPhysics, total: data.totalClassesPhysics },
+    { title: "Math", attended: data.attendedClassesMath, total: data.totalClassesMath },
+    { title: "PPS", attended: data.attendedClassesPPS, total: data.totalClassesPPS },
   ];
 
   return (
@@ -91,6 +76,22 @@ function App() {
         gridGap={10}
         animationSpeed={1.5}
       />
+
+      {/* Chatbot */}
+      <div className={`chatbot-container ${isChatbotOpen ? "open" : "collapsed"}`}>
+        <button className="chatbot-toggle" onClick={toggleChatbot}>
+          {isChatbotOpen ? "–" : "+"}
+        </button>
+        {isChatbotOpen && (
+          <iframe
+            src="https://console.dialogflow.com/api-client/demo/embedded/522b241d-8513-4381-8ee1-336b93bfc6a6"
+            title="Dialogflow Chatbot"
+            allow="microphone;"
+            onLoad={() => console.log("Chatbot loaded successfully.")}
+            onError={() => console.error("Failed to load chatbot.")}
+          ></iframe>
+        )}
+      </div>
 
       <div id="root">
         <div>
@@ -157,10 +158,7 @@ function App() {
         {/* Modal */}
         {isModalOpen && (
           <div className="modal-overlay" onClick={closeModal}>
-            <div
-              className="modal-content"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <h2>{modalContent.title}</h2>
               <p dangerouslySetInnerHTML={{ __html: modalContent.details }}></p>
               <button onClick={closeModal}>Close</button>
